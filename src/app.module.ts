@@ -16,6 +16,6 @@ import { TestService } from './test.service'
 @Module({
   imports: [],
   controllers: [AppController],
-  providers: [AppService, TestService],
+  providers: [AppService, TestService], // all services
 })
 export class AppModule {}

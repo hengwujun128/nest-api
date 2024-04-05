@@ -35,6 +35,7 @@ const { userName, password } = getMySqlUserNameAndPassword()
       database: 'nest-book-dev',
       entities: [],
       synchronize: true,
+      autoLoadEntities: true, //自动加载 entity
     }),
     UserModule,
     AuthModule,

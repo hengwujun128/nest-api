@@ -1,5 +1,6 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common'
 import { UserService } from './user.service'
+import { CreateUserDto } from './create-user.dto'
 
 @Controller('user')
 export class UserController {
@@ -7,7 +8,7 @@ export class UserController {
 
   @Get('') // 此处 '/' 和 '' 是一样的
   getUsers() {
-    return 'get all users list---'
+    return this.userService.findAll()
   }
 
   @Get(':id') // 此处 /:id 和 :id 是一样的
@@ -20,4 +21,14 @@ export class UserController {
     return this.userService.findOne(id)
   }
   // 如何对参数的类型进行转换? ParseIntPipe
+
+  @Post()
+  async create(@Body() userData: CreateUserDto) {
+    return await this.userService.create(userData)
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.remove(id)
+  }
 }

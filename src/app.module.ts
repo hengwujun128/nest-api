@@ -38,7 +38,7 @@ const { userName, password } = getMySqlUserNameAndPassword()
       autoLoadEntities: true, //自动加载 entity
     }),
     UserModule,
-    AuthModule,
+    // AuthModule,
     BookModule,
   ],
   controllers: [AppController],

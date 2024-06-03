@@ -20,8 +20,9 @@ export class UserController {
     console.log(typeof id)
     return this.userService.findOne(id)
   }
-  // 如何对参数的类型进行转换? ParseIntPipe
 
+  // 如何对参数的类型进行转换? ParseIntPipe
+  // TODO: 没有对 userData 进行校验 ,可以使用 validationPipe 进行校验
   @Post()
   async create(@Body() userData: CreateUserDto) {
     return await this.userService.create(userData)

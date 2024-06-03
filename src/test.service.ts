@@ -33,7 +33,7 @@ export class TestService {
 
   addData(body, query): string {
     console.log('body:', { body, query })
-    return 'this is add data:' + JSON.stringify(body) + '---- id=' + query.id
+    return 'this is add data: body' + JSON.stringify(body) + '----query.id=' + query.id
   }
 
   updateData(body): string {

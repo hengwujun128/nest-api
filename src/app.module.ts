@@ -25,7 +25,6 @@ const { userName, password } = getMySqlUserNameAndPassword()
 // 应用程序的根模块
 @Module({
   imports: [
-    // 数据库连接信息
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: '120.24.7.205',
@@ -38,7 +37,7 @@ const { userName, password } = getMySqlUserNameAndPassword()
       autoLoadEntities: true, //自动加载 entity
     }),
     UserModule,
-    // AuthModule,
+    AuthModule,
     BookModule,
   ],
   controllers: [AppController],

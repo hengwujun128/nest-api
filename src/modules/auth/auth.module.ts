@@ -17,7 +17,7 @@ import { AuthGuard } from './auth.guard'
   providers: [
     AuthService,
     {
-      provide: APP_GUARD,
+      provide: APP_GUARD, // token 使用APP_GUARD ,代表是全局token, 对全局模块都默认起作用
       useClass: AuthGuard,
     },
   ],

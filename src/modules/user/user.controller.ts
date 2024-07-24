@@ -1,3 +1,4 @@
+import { Public } from './../auth/public.decorator'
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './create-user.dto'
@@ -6,6 +7,7 @@ import { CreateUserDto } from './create-user.dto'
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Public()
   @Get('') // 此处 '/' 和 '' 是一样的
   getUsers() {
     return this.userService.findAll()

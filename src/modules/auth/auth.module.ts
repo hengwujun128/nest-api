@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 
+import { UserModule } from '../user/user.module'
+
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 import { AuthGuard } from './auth.guard'
@@ -13,11 +15,12 @@ import { AuthGuard } from './auth.guard'
  */
 
 @Module({
+  imports: [UserModule],
   controllers: [AuthController],
   providers: [
     AuthService,
     {
-      provide: APP_GUARD, // token 使用APP_GUARD ,代表是全局token, 对全局模块都默认起作用
+      provide: APP_GUARD,
       useClass: AuthGuard,
     },
   ],

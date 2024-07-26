@@ -16,6 +16,7 @@ export class AuthService {
 
     if (isMatch) {
       console.log('登录成功')
+      // jwt 生成 token
     } else {
       // nest 内置抛出异常
       throw new UnauthorizedException()

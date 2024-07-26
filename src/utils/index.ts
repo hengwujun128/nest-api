@@ -13,3 +13,20 @@ export function getMySqlUserNameAndPassword() {
   console.log({ userName, password })
   return { userName, password }
 }
+
+// 成功响应
+export function success(data, msg) {
+  return {
+    code: 0,
+    msg,
+    data,
+  }
+}
+
+// 失败响应
+export function error(data, msg) {
+  return {
+    code: -1,
+    msg,
+  }
+}

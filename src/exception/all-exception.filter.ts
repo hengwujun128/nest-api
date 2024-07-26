@@ -1,6 +1,12 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
-
+/*
+ *
+ * @description 对所有的异常进行捕获
+ * @Catch() 装饰器置空就是捕获所有的异常
+ * @class AllExceptionsFilter
+ * @implements {ExceptionFilter}
+ * */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}

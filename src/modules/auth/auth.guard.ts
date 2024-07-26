@@ -32,6 +32,8 @@ export class AuthGuard implements CanActivate {
       return true
     }
 
+    // 校验 token 是在  authGard 中进行, 生成 token 是在authService 中进行
+
     return undefined
   }
 }

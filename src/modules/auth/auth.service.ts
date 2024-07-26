@@ -14,10 +14,13 @@ export class AuthService {
   async login(username, password) {
     // TODO: 需要使用到 UserService
     const user = await this.userService.findByUserName(username)
-
-    const hashPassword = user.password
-    const isMatch = await bcrypt.compare(password, hashPassword)
     console.log({ user, password })
+    if (!user) {
+      throw new UnauthorizedException('用户未注册,请先进行注册再登录')
+    }
+    const hashPassword = user.password
+    // const isMatch = await bcrypt.compare(password, hashPassword)
+    const isMatch = password === hashPassword
 
     if (isMatch) {
       console.log('登录成功')

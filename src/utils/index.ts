@@ -18,8 +18,8 @@ export function getMySqlUserNameAndPassword() {
 export function success(data, msg) {
   return {
     code: 0,
-    msg,
-    data,
+    message: msg,
+    result: data,
   }
 }
 
@@ -27,6 +27,6 @@ export function success(data, msg) {
 export function error(msg) {
   return {
     code: -1,
-    msg,
+    message: msg,
   }
 }

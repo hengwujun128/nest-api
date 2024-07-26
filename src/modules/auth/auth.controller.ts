@@ -4,6 +4,8 @@ import { AuthService } from './auth.service'
 
 import { HttpExceptionFilter } from '../../exception/http-exception.filter'
 
+import { success, error } from '../../utils'
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -12,6 +14,9 @@ export class AuthController {
   @Post('login')
   @UseFilters(new HttpExceptionFilter())
   async login(@Body() params) {
-    await this.authService.login(params.username, params.password)
+    return await this.authService
+      .login(params.username, params.password)
+      .then((data) => success(data, '登录成功'))
+      .catch((err) => error(err.message))
   }
 }

@@ -24,7 +24,7 @@ export function success(data, msg) {
 }
 
 // 失败响应
-export function error(data, msg) {
+export function error(msg) {
   return {
     code: -1,
     msg,

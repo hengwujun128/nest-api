@@ -23,6 +23,12 @@ export class UserController {
     return this.userService.findOne(id)
   }
 
+  // 获取用户信息(登录成功之后)
+  @Get('info')
+  getUserByToken() {
+    return console.log('getUserByToken')
+  }
+
   // 如何对参数的类型进行转换? ParseIntPipe
   // TODO: 没有对 userData 进行校验 ,可以使用 validationPipe 进行校验
   @Post()

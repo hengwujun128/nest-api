@@ -27,7 +27,7 @@ export class AuthService {
       // jwt 生成 token
       const payload = { username: user.username, sub: user.id }
       return {
-        access_token: await this.jwtService.signAsync(payload),
+        token: await this.jwtService.signAsync(payload),
       }
     } else {
       // nest 内置抛出异常

@@ -2,6 +2,7 @@ import { Public } from './../auth/public.decorator'
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Req } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './create-user.dto'
+import { wrapperResponse } from '../../utils'
 
 @Controller('user')
 export class UserController {
@@ -17,7 +18,7 @@ export class UserController {
   // TODO: @Public() 添加到此处,authGard 还是undefined
   @Get('info')
   getUserByToken(@Req() request) {
-    return this.userService.findByUserName(request.user.username)
+    return wrapperResponse(this.userService.findByUserName(request.user.username), '获取用户信息成功')
   }
 
   @Get(':id') // 此处 /:id 和 :id 是一样的

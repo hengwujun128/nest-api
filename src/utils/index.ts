@@ -30,3 +30,11 @@ export function error(msg) {
     message: msg,
   }
 }
+
+export function wrapperResponse(p: Promise<any>, msg) {
+  return p
+    .then((data) => success(data, msg))
+    .catch((err) => {
+      return error(err.message)
+    })
+}

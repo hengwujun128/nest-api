@@ -4,7 +4,7 @@ import { AuthService } from './auth.service'
 
 import { HttpExceptionFilter } from '../../exception/http-exception.filter'
 
-import { success, error } from '../../utils'
+import { wrapperResponse } from '../../utils'
 
 @Controller('auth')
 export class AuthController {
@@ -13,10 +13,7 @@ export class AuthController {
   @Public()
   @Post('login')
   @UseFilters(new HttpExceptionFilter())
-  async login(@Body() params) {
-    return await this.authService
-      .login(params.username, params.password)
-      .then((data) => success(data, '登录成功'))
-      .catch((err) => error(err.message))
+  login(@Body() params) {
+    return wrapperResponse(this.authService.login(params.username, params.password), '登录成功')
   }
 }

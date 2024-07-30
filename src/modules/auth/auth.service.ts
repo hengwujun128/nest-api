@@ -32,7 +32,7 @@ export class AuthService {
     } else {
       // nest 内置抛出异常
       throw new UnauthorizedException()
-      //  使用自定义 异常
+      //  使用自定义 异常 捕捉
     }
   }
 }

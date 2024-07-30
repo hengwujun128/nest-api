@@ -1,5 +1,5 @@
 import { Public } from './../auth/public.decorator'
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Req } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './create-user.dto'
 
@@ -13,6 +13,13 @@ export class UserController {
     return this.userService.findAll()
   }
 
+  // 获取用户信息(登录成功之后)
+  // TODO: @Public() 添加到此处,authGard 还是undefined
+  @Get('info')
+  getUserByToken(@Req() request) {
+    return this.userService.findByUserName(request.user.username)
+  }
+
   @Get(':id') // 此处 /:id 和 :id 是一样的
   // getUserById(@Param() params): string {
   //   return 'get user by id---' + params.id
@@ -21,12 +28,6 @@ export class UserController {
   getUserById(@Param('id', ParseIntPipe) id: number) {
     console.log(typeof id)
     return this.userService.findOne(id)
-  }
-
-  // 获取用户信息(登录成功之后)
-  @Get('info')
-  getUserByToken() {
-    return console.log('getUserByToken')
   }
 
   // 如何对参数的类型进行转换? ParseIntPipe

@@ -42,7 +42,7 @@ export class UserService {
     const user = new User()
     user.username = createUserDto.username + Math.floor(Math.random() * 10000)
     user.password = createUserDto.password
-    user.role = createUserDto.role
+    user.roles = createUserDto.roles
     user.avatar = createUserDto.avatar
     user.nickname = createUserDto.nickname
 

@@ -20,7 +20,7 @@ export class User {
   password: string
 
   @Column()
-  role: string
+  roles: string
 
   @Column()
   nickname: string

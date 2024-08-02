@@ -10,7 +10,7 @@ import { AuthModule } from './modules/auth/auth.module'
 import { BookModule } from './modules/book/book.module'
 
 import { getMySqlUserNameAndPassword } from './utils'
-import { MenuModule } from './menu/menu.module';
+import { MenuModule } from './modules/menu/menu.module'
 
 const { userName, password } = getMySqlUserNameAndPassword()
 

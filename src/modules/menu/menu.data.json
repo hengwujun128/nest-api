@@ -579,13 +579,21 @@
   {
     "path": "/permission",
     "name": "Permission",
-    "redirect": "/permission/front/page",
+    "redirect": "/permission/menu",
     "meta": {
       "orderNo": 15,
       "icon": "ion:key-outline",
       "title": "routes.demo.permission.permission"
     },
     "children": [
+      {
+        "path": "menu",
+        "name": "PermissionMenu",
+        "meta": {
+          "title": "routes.demo.permission.menu"
+        }
+      },
+
       {
         "path": "front",
         "name": "PermissionFrontDemo",

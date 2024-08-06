@@ -612,7 +612,7 @@
             "name": "FrontAuthPageA",
             "meta": {
               "title": "routes.demo.permission.frontTestA",
-              "roles": ["super"]
+              "roles": "[\"super\"]"
             }
           },
           {
@@ -620,7 +620,7 @@
             "name": "FrontAuthPageB",
             "meta": {
               "title": "routes.demo.permission.frontTestB",
-              "roles": ["test"]
+              "roles": "[\"test\"]"
             }
           }
         ]

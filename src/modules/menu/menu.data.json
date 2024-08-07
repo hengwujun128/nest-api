@@ -35,17 +35,12 @@
       {
         "path": "analysis",
         "name": "Analysis",
-        "meta": {
-          "title": "routes.dashboard.analysis"
-        }
+        "meta": { "title": "routes.dashboard.analysis" }
       },
       {
         "path": "workbench",
         "name": "Workbench",
-        "meta": {
-          "title": "routes.dashboard.workbench",
-          "roles": "[\"test\"]"
-        }
+        "meta": { "title": "routes.dashboard.workbench", "roles": "[\"test\"]" }
       }
     ]
   },
@@ -580,18 +575,12 @@
     "path": "/permission",
     "name": "Permission",
     "redirect": "/permission/menu",
-    "meta": {
-      "orderNo": 15,
-      "icon": "ion:key-outline",
-      "title": "routes.demo.permission.permission"
-    },
+    "meta": { "orderNo": 15, "icon": "ion:key-outline", "title": "routes.demo.permission.permission" },
     "children": [
       {
         "path": "menu",
         "name": "PermissionMenu",
-        "meta": {
-          "title": "routes.demo.permission.menu"
-        }
+        "meta": { "title": "routes.demo.permission.menu" }
       },
 
       {

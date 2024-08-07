@@ -32,8 +32,8 @@ export class Menu {
   id: number
 
   @Column()
-  @Unique(['path'])
-  path: string // path 不能重复
+  // @Unique(['path'])
+  path: string // path 可以重复
 
   @Column()
   @Unique(['name']) // 组件名称字段name 是唯一性的
@@ -48,6 +48,6 @@ export class Menu {
   @Column()
   pid: number // 父级菜单,解决路由的 children的问题
 
-  @Column()
+  @Column({ default: 1 }) //
   active: number //当前菜单是否可用 1-可用, 0-不可用
 }

@@ -22,6 +22,7 @@ interface JSONArray extends Array<JSONValue> {}
 // These kind of type is known as Recursive Type Aliases.After TypeScript 3.7 we can also define it in a confined way:
 type JSON = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>
 // Promise<JSON>
+
 @Injectable()
 export class MenuService {
   constructor(
@@ -30,6 +31,20 @@ export class MenuService {
   ) {}
 
   findAll(): Promise<Menu[]> {
-    return this.menuRepository.findBy({ active: 1 })
+    const SQL = `select * from admin_menu  order by id asc`
+    // return this.menuRepository.findBy({ active: 1 })
+    return this.menuRepository.query(SQL)
+  }
+  findActive(): Promise<Menu[]> {
+    const SQL = `select * from admin_menu where active = 1 order by id asc`
+    return this.menuRepository.query(SQL)
+  }
+
+  create(body) {
+    return this.menuRepository.save(body)
+  }
+  update(body) {
+    const id = body.id
+    return this.menuRepository.update(id, body)
   }
 }

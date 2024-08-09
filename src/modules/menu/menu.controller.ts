@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req } from '@nestjs/common'
 
 import { MenuService } from './menu.service'
 import { wrapperResponse } from '../../utils'
@@ -13,6 +13,11 @@ export class MenuController {
     // return this.menuService.findAll()
   }
 
+  @Get('active')
+  getActiveMenus() {
+    return wrapperResponse(this.menuService.findActive(), '获取菜单成功')
+  }
+
   @Get(':id') // 此处 /:id 和 :id 是一样的
   getUserById(@Param('id', ParseIntPipe) id: number) {
     console.log(typeof id)
@@ -20,8 +25,14 @@ export class MenuController {
 
   // 如何对参数的类型进行转换? ParseIntPipe
   @Post()
-  async create(@Body() menu) {
-    console.log(menu)
+  create(@Body() menu) {
+    console.log('接口数据', menu)
+    return wrapperResponse(this.menuService.create(menu), '创建菜单成功')
+  }
+
+  @Put()
+  update(@Body() menu) {
+    return wrapperResponse(this.menuService.update(menu), '更新菜单成功')
   }
 
   @Delete(':id')

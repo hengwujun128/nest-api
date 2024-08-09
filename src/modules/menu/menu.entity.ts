@@ -39,7 +39,7 @@ export class Menu {
   @Unique(['name']) // 组件名称字段name 是唯一性的
   name: string
 
-  @Column()
+  @Column({ default: null })
   redirect: string // 重定向
 
   @Column()

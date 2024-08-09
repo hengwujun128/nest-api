@@ -36,7 +36,7 @@ const { userName, password } = getMySqlUserNameAndPassword()
       entities: [],
       synchronize: true,
       autoLoadEntities: true, //自动加载 entity
-      logging: false, // print sql logs
+      logging: true, // print sql logs
     }),
     UserModule,
     AuthModule,

@@ -48,18 +48,12 @@
     "path": "/charts",
     "name": "Charts",
     "redirect": "/charts/echarts/map",
-    "meta": {
-      "orderNo": 500,
-      "icon": "ion:bar-chart-outline",
-      "title": "routes.demo.charts.charts"
-    },
+    "meta": { "orderNo": 500, "icon": "ion:bar-chart-outline", "title": "routes.demo.charts.charts" },
     "children": [
       {
         "path": "baiduMap",
         "name": "BaiduMap",
-        "meta": {
-          "title": "routes.demo.charts.baiduMap"
-        }
+        "meta": { "title": "routes.demo.charts.baiduMap" }
       },
       {
         "path": "aMap",

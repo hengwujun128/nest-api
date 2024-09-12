@@ -48,7 +48,9 @@ export class UserService {
     }
 
     const sql = `select id,username,roles,nickname,avatar,active from admin_user
-      ${where} limit ${pageSize} offset ${(page - 1) * pageSize}`
+      ${where}
+      order by id desc
+      limit ${pageSize} offset ${(page - 1) * pageSize}`
 
     return await this.userRepository.query(sql)
   }

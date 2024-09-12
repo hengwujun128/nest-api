@@ -8,7 +8,9 @@ import { wrapperResponse } from '../../utils'
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {
+    console.log('----author.controller----')
+  }
 
   @Public()
   @Post('login')

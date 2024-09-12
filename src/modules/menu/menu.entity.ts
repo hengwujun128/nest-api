@@ -40,9 +40,9 @@ export class Menu {
   name: string
 
   @Column({ default: null })
-  redirect: string // 重定向
+  redirect: null | string // 重定向
 
-  @Column()
+  @Column({ default: '' })
   meta: string // 路由的 meta 是个对象, mysql 则用 json 字符串存储
 
   @Column()

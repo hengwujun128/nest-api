@@ -25,9 +25,9 @@ export class User {
   @Column()
   nickname: string
 
-  @Column()
+  @Column({ default: '' })
   avatar: string
 
-  @Column()
-  active: boolean
+  @Column({ default: 1 })
+  active: number
 }

@@ -8,4 +8,5 @@ export class CreateUserDto {
   roles: string // roles 应该是是个数组, mysql 不支持
   nickname: string
   avatar: string
+  active: number
 }

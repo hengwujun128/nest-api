@@ -1,5 +1,5 @@
 import { Public } from './../auth/public.decorator'
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './create-user.dto'
 import { wrapperResponse } from '../../utils'
@@ -10,8 +10,9 @@ export class UserController {
 
   @Public()
   @Get('') // 此处 '/' 和 '' 是一样的
-  getUsers() {
-    return this.userService.findAll()
+  getUsers(@Query() query) {
+    // console.log(query)
+    return wrapperResponse(this.userService.findAll(query), '获取用户列表成功')
   }
 
   // 获取用户信息(登录成功之后)
@@ -35,11 +36,17 @@ export class UserController {
   // TODO: 没有对 userData 进行校验 ,可以使用 validationPipe 进行校验
   @Post()
   async create(@Body() userData: CreateUserDto) {
-    return await this.userService.create(userData)
+    // return await this.userService.create(userData)
+    return wrapperResponse(this.userService.create(userData), '创建用户成功')
+  }
+
+  @Put('')
+  update(@Body() userData: CreateUserDto) {
+    return wrapperResponse(this.userService.update(userData), '更新用户成功')
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.remove(id)
+    return wrapperResponse(this.userService.remove(id), '删除用户成功')
   }
 }

@@ -19,17 +19,38 @@ export class UserService {
    * Constructor for UserService
    * @param userRepository The repository for User entity
    */
-  constructor(
-    @InjectRepository(User)
-    readonly userRepository: Repository<User>,
-  ) {}
+  constructor(@InjectRepository(User) readonly userRepository: Repository<User>) {}
 
   async findOne(id: number): Promise<User> {
     return await this.userRepository.findOneBy({ id })
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find()
+  async findAll(query): Promise<User[]> {
+    const { id, username, active } = query
+    let page = +query.page || 1
+    let pageSize = +query.pageSize || 10
+    let where = `where 1=1`
+
+    if (username) {
+      where += ` AND username='${username}'`
+    }
+    if (id) {
+      where += ` AND id='${id}'`
+    }
+    if (active) {
+      where += ` AND active= '${active}'`
+    }
+    if (page <= 0) {
+      page = 1
+    }
+    if (pageSize <= 0) {
+      pageSize = 10
+    }
+
+    const sql = `select id,username,roles,nickname,avatar,active from admin_user
+      ${where} limit ${pageSize} offset ${(page - 1) * pageSize}`
+
+    return await this.userRepository.query(sql)
   }
 
   /**
@@ -40,14 +61,19 @@ export class UserService {
    */
   async create(createUserDto: CreateUserDto): Promise<User> {
     const user = new User()
-    user.username = createUserDto.username + Math.floor(Math.random() * 10000)
+    user.username = createUserDto.username
     user.password = createUserDto.password
     user.roles = createUserDto.roles
     user.avatar = createUserDto.avatar
-    user.nickname = createUserDto.nickname
+    user.nickname = createUserDto.nickname || createUserDto.username
 
-    user.active = true // 设置默认值
+    user.active = createUserDto.active
     return await this.userRepository.save(user)
+  }
+
+  update(body) {
+    const id = body.id
+    return this.userRepository.update(id, body)
   }
 
   remove(id: number): Promise<DeleteResult> {

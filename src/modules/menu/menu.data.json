@@ -72,17 +72,13 @@
       {
         "path": "echarts",
         "name": "Echarts",
-        "meta": {
-          "title": "Echarts"
-        },
+        "meta": { "title": "Echarts" },
         "redirect": "/charts/echarts/map",
         "children": [
           {
             "path": "map",
             "name": "Map",
-            "meta": {
-              "title": "routes.demo.charts.map"
-            }
+            "meta": { "title": "routes.demo.charts.map" }
           },
           {
             "path": "line",

@@ -12,6 +12,8 @@ import { BookModule } from './modules/book/book.module'
 import { getMySqlUserNameAndPassword } from './utils'
 import { MenuModule } from './modules/menu/menu.module'
 
+import { RoleModule } from './modules/role/role.module'
+
 const { userName, password } = getMySqlUserNameAndPassword()
 
 // console.log(userName)
@@ -42,6 +44,7 @@ const { userName, password } = getMySqlUserNameAndPassword()
     AuthModule,
     BookModule,
     MenuModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService, TestService], // all services

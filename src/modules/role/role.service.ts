@@ -47,7 +47,7 @@ export class RoleService {
       pageSize = 10
     }
 
-    const sql = `select id,name,roles,nickname,avatar,active from admin_role
+    const sql = `select id,name from admin_role
       ${where}
       order by id desc
       limit ${pageSize} offset ${(page - 1) * pageSize}`

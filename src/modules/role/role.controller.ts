@@ -9,7 +9,7 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Public()
-  @Get('') // 此处 '/' 和 '' 是一样的
+  @Get() // 此处 '/' 和 '' 是一样的
   getRoles(@Query() query) {
     // console.log(query)
     return wrapperResponse(this.roleService.findAll(query), '获取角色列表成功')

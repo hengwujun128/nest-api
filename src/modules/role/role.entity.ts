@@ -5,29 +5,13 @@
  * 4. 和 java 类似
  */
 
-import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
-@Entity('admin_role') // 和 admin_user 表建立映射关系
+@Entity('admin_role') // 和 admin_role 表建立映射关系
 export class Role {
   @PrimaryGeneratedColumn() // 主键自增, 不能是普通的@Column
   id: number
 
-  @Column() // 和数据表字段 username 建立映射关系
-  @Unique(['username']) // 数据表字段username 是唯一性的
-  username: string
-
-  @Column()
-  password: string
-
-  @Column()
-  roles: string
-
-  @Column()
-  nickname: string
-
-  @Column({ default: '' })
-  avatar: string
-
-  @Column({ default: 1 })
-  active: number
+  @Column() // 和数据表字段 name 建立映射关系
+  name: string
 }

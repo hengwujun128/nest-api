@@ -40,7 +40,7 @@ export class UserController {
     return wrapperResponse(this.userService.create(userData), '创建用户成功')
   }
 
-  @Put('')
+  @Put()
   update(@Body() userData: CreateUserDto) {
     return wrapperResponse(this.userService.update(userData), '更新用户成功')
   }

@@ -23,9 +23,9 @@ export class RoleController {
 
   // 如何对参数的类型进行转换? ParseIntPipe
   @Post()
-  async create(@Body() userData: CreateRoleDto) {
+  async create(@Body() roleData: CreateRoleDto) {
     // return await this.roleService.create(userData)
-    return wrapperResponse(this.roleService.create(userData), '创建角色成功')
+    return wrapperResponse(this.roleService.create(roleData), '创建角色成功')
   }
 
   @Put()

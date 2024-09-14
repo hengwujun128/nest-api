@@ -14,4 +14,7 @@ export class Role {
 
   @Column() // 和数据表字段 name 建立映射关系
   name: string
+
+  @Column()
+  remark: string
 }

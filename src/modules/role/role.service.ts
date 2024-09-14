@@ -47,7 +47,7 @@ export class RoleService {
       pageSize = 10
     }
 
-    const sql = `select id,name from admin_role
+    const sql = `select id,name,remark from admin_role
       ${where}
       order by id desc
       limit ${pageSize} offset ${(page - 1) * pageSize}`
@@ -64,7 +64,8 @@ export class RoleService {
   async create(createRoleDto: CreateRoleDto): Promise<Role> {
     const role = new Role()
     role.name = createRoleDto.name
-
+    role.remark = createRoleDto.remark
+    console.log('role', role)
     return await this.roleRepository.save(role)
   }
 

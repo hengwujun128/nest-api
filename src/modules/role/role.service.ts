@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { InjectRepository } from '@nestjs/typeorm'
-import { DeleteResult, Repository } from 'typeorm'
+import { DeleteResult, InsertResult, QueryResult, Repository } from 'typeorm'
 import { Role } from './role.entity'
 import { CreateRoleDto } from './create-role.dto'
 
@@ -69,6 +69,45 @@ export class RoleService {
     return await this.roleRepository.save(role)
   }
 
+  /**
+   * 创建角色菜单
+   * - 创建 roleId 和 menuId 的绑定关系
+   * - 查询 menu 表中的 meta 字段
+   */
+  createRoleMenu(params): Promise<InsertResult> {
+    const { roleId, menuId } = params
+    console.log('createRoleMenu', params)
+    // 插入 roleId 和 menuId 的绑定关系
+    const insertSql = `INSERT INTO role_menu (role_id, menu_id) VALUES (${roleId}, ${menuId})`
+    return this.roleRepository.query(insertSql)
+  }
+
+  /*
+   * 获取角色菜单-根据 roleId获取角色的菜单
+   */
+  getRoleMenu(roleId: number): Promise<QueryResult> {
+    const sql = `SELECT roleId,menuId from role_menu WHERE roleId = ${roleId}`
+    return this.roleRepository.query(sql)
+  }
+
+  /**
+   * 删除角色菜单
+   */
+  removeRoleMenu(roleId: number): Promise<DeleteResult> {
+    if (!roleId) {
+      return
+    }
+    const sql = `DELETE FROM role_menu WHERE roleId = ${roleId}`
+    return this.roleRepository.query(sql)
+  }
+  /*
+   * 更新角色 - 更新角色,更新角色菜单绑定关系,更新 menu 表中的 meta 字段
+   *
+   * @param {any} body
+   * @returns
+   *
+   * @memberOf RoleService
+   * */
   update(body) {
     const id = body.id
     return this.roleRepository.update(id, body)

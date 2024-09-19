@@ -1,5 +1,5 @@
 import { Public } from './../auth/public.decorator'
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common'
 import { RoleService } from './role.service'
 import { CreateRoleDto } from './create-role.dto'
 import { wrapperResponse } from '../../utils'
@@ -15,22 +15,40 @@ export class RoleController {
     return wrapperResponse(this.roleService.findAll(query), '获取角色列表成功')
   }
 
-  @Get(':id') // 此处 /:id 和 :id 是一样的
-  getRolesById(@Param('id', ParseIntPipe) id: number) {
-    console.log(typeof id)
-    return this.roleService.findOne(id)
-  }
-
-  // 如何对参数的类型进行转换? ParseIntPipe
   @Post()
   async create(@Body() roleData: CreateRoleDto) {
     // return await this.roleService.create(userData)
     return wrapperResponse(this.roleService.create(roleData), '创建角色成功')
   }
 
+  @Get('role_menu')
+  getRoleMenu(@Query('roleId', ParseIntPipe) roleId: number) {
+    return wrapperResponse(this.roleService.getRoleMenu(roleId), '获取角色菜单成功')
+  }
+
+  @Post('role_menu')
+  createRoleMenu(@Body() body) {
+    return wrapperResponse(this.roleService.createRoleMenu(body), '关联角色菜单成功')
+  }
+
+  // TODO: 删除角色菜单为啥要用 body 传送呢?
+  @Delete('role_menu')
+  deleteRoleMenu(@Query('roleId', ParseIntPipe) roleId: number) {
+    return wrapperResponse(this.roleService.removeRoleMenu(roleId), '删除角色菜单成功')
+  }
+
   @Put()
   update(@Body() userData: CreateRoleDto) {
     return wrapperResponse(this.roleService.update(userData), '更新角色成功')
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* controller 中路由命中优先级 静态路由大于动态路由 /role/role_menu > /role/:id     */
+  /* -------------------------------------------------------------------------- */
+  @Get(':id') // 此处 /:id 和 :id 是一样的
+  getRolesById(@Param('id', ParseIntPipe) id: number) {
+    console.log(typeof id)
+    return this.roleService.findOne(id)
   }
 
   @Delete(':id')

@@ -83,7 +83,7 @@ export class RoleService {
     role.name = roleData.name
     role.remark = roleData.remark
     console.log('role', role)
-    return await this.roleRepository.insert(roleData)
+    return await this.roleRepository.insert(role)
   }
 
   /**

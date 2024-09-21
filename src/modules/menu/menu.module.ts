@@ -15,6 +15,6 @@ import { TypeOrmModule } from '@nestjs/typeorm'
       provide: MenuService, // token
     },
   ],
-  // exports: [MenuService]
+  exports: [MenuService], // 供其它模块使用, 如,RoleModule
 })
 export class MenuModule {}

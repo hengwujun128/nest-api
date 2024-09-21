@@ -3,6 +3,7 @@
  */
 
 export class CreateRoleDto {
+  id?: number
   name: string
   remark: string
   menu?: number[]

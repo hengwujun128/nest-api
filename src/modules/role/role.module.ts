@@ -5,8 +5,10 @@ import { RoleController } from './role.controller'
 import { Role } from './role.entity'
 import { RoleService } from './role.service'
 
+import { MenuModule } from '../menu/menu.module'
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Role])],
+  imports: [MenuModule, TypeOrmModule.forFeature([Role])],
 
   controllers: [RoleController],
   providers: [

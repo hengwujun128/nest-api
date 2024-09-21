@@ -13,7 +13,7 @@ export class Role {
   id: number
 
   @Column()
-  @Unique(['roleName'])
+  @Unique(['roleName']) // 索引的名称,索引是唯一性
   name: string
 
   @Column()

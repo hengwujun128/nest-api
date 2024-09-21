@@ -31,7 +31,7 @@ export class RoleController {
     return wrapperResponse(this.roleService.createRoleMenu(body), '关联角色菜单成功')
   }
 
-  // TODO: 删除角色菜单为啥要用 body 传送呢?
+  // NOTE: 删除角色菜单为啥要用 body 传送呢?
   @Delete('role_menu')
   deleteRoleMenu(@Query('roleId', ParseIntPipe) roleId: number) {
     return wrapperResponse(this.roleService.removeRoleMenu(roleId), '删除角色菜单成功')

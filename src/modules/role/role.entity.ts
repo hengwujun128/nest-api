@@ -5,14 +5,15 @@
  * 4. 和 java 类似
  */
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, Unique, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('admin_role') // 和 admin_role 表建立映射关系
 export class Role {
   @PrimaryGeneratedColumn() // 主键自增, 不能是普通的@Column
   id: number
 
-  @Column() // 和数据表字段 name 建立映射关系
+  @Column()
+  @Unique(['roleName'])
   name: string
 
   @Column()

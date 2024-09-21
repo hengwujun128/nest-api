@@ -57,29 +57,57 @@ export class RoleService {
 
   /**
    * Create a new role with the provided information.
-   *
+   * @desc 1. 先创建角色,在创建角色绑定关系,最后更新菜单中 meta 字段角色
    * @param {CreateRoleDto} createRoleDto - the data transfer object containing role information
    * @return {Promise<Role>} the newly created role
    */
-  async create(createRoleDto: CreateRoleDto): Promise<Role> {
+  async create(createRoleDto: CreateRoleDto): Promise<any> {
+    // const role = new Role()
+    // role.name = createRoleDto.name
+    // role.remark = createRoleDto.remark
+    // return await this.roleRepository.save(role)
+    // 1. 先创建角色
+    const res = await this.createRole(createRoleDto)
+    console.log('res', res)
+    const { raw } = res
+    const roleMenuRes = await this.createRoleMenu({ roleId: raw.insertId, menuId: createRoleDto.menu })
+    return roleMenuRes
+    // 2. 创建角色菜单绑定关系(一个角色,多个菜单)- 批量插入(注意:这里和编辑有区别,现在批量删除在新增)
+
+    // 3. 更新菜单中 meta 字段角色
+  }
+
+  // 创建角色
+  async createRole(roleData: CreateRoleDto): Promise<InsertResult> {
     const role = new Role()
-    role.name = createRoleDto.name
-    role.remark = createRoleDto.remark
+    role.name = roleData.name
+    role.remark = roleData.remark
     console.log('role', role)
-    return await this.roleRepository.save(role)
+    return await this.roleRepository.insert(roleData)
   }
 
   /**
    * 创建角色菜单
-   * - 创建 roleId 和 menuId 的绑定关系
-   * - 查询 menu 表中的 meta 字段
+   * - 创建 roleId 和 menuId 的绑定关系(批量插入)
+   * - 三种批量插入方式: save、insert和createQueryBuilder方法
    */
-  createRoleMenu(params): Promise<InsertResult> {
+  async createRoleMenu(params): Promise<InsertResult> {
     const { roleId, menuId } = params
     console.log('createRoleMenu', params)
-    // 插入 roleId 和 menuId 的绑定关系
-    const insertSql = `INSERT INTO role_menu (role_id, menu_id) VALUES (${roleId}, ${menuId})`
-    return this.roleRepository.query(insertSql)
+    // const insertSql = `INSERT INTO role_menu (role_id, menu_id) VALUES (${roleId}, ${menuId})`
+    // const result = await this.roleRepository.query(insertSql)
+    // return result
+
+    const roleMenuData = menuId.map((item) => {
+      return { roleId, menuId: item }
+    })
+    const insertRes = await this.roleRepository
+      .createQueryBuilder()
+      .insert()
+      .into('role_menu')
+      .values(roleMenuData)
+      .execute()
+    return insertRes
   }
 
   /*
@@ -101,12 +129,10 @@ export class RoleService {
     return this.roleRepository.query(sql)
   }
   /*
-   * 更新角色 - 更新角色,更新角色菜单绑定关系,更新 menu 表中的 meta 字段
-   *
-   * @param {any} body
-   * @returns
-   *
-   * @memberOf RoleService
+   * 更新角色
+   * - 更新角色
+   * - 更新角色菜单绑定关系(先批量删除再批量插入)
+   * - 更新 menu 表中的 meta 字段
    * */
   update(body) {
     const id = body.id

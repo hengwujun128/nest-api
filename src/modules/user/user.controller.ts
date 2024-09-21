@@ -11,7 +11,6 @@ export class UserController {
   @Public()
   @Get('') // 此处 '/' 和 '' 是一样的
   getUsers(@Query() query) {
-    // console.log(query)
     return wrapperResponse(this.userService.findAll(query), '获取用户列表成功')
   }
 
@@ -28,7 +27,6 @@ export class UserController {
   // }
   //  单个参数获取简便方法?
   getUserById(@Param('id', ParseIntPipe) id: number) {
-    console.log(typeof id)
     return this.userService.findOne(id)
   }
 

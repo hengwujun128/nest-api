@@ -174,7 +174,7 @@ export class RoleService {
 
     const menuList = await this.roleRepository.query(`SELECT * FROM admin_menu WHERE id IN (${body.menu}) `)
     // const currentRole = await this.roleRepository.query(`SELECT * FROM admin_role WHERE id=${body.id}`)
-    menuList.map((menu) => {
+    const updatedMenuList = menuList.map((menu) => {
       const { meta } = menu
       if (meta) {
         const metaData = JSON.parse(meta)
@@ -187,15 +187,31 @@ export class RoleService {
         } else {
           metaData.roles = JSON.stringify([body.name])
         }
-        console.log(metaData)
+        metaData.roles = metaData.roles.replaceAll('"', '\\"') // 将双引号, 替换成 \"
+        // console.log(metaData)
+        menu.meta = JSON.stringify(metaData)
       }
       return menu
     })
-    // this.menuService.update({ roleId: body.id, menus: body.menu })
+    // 批量更新 mate 字段
+    const sqlArr = []
+    updatedMenuList.forEach((menu) => {
+      const sql = `UPDATE  admin_menu SET meta = '${menu.meta}' WHERE id = ${menu.id}`
+      sqlArr.push(this.roleRepository.query(sql))
+    })
+    Promise.all(sqlArr)
+      .then((values) => {
+        console.log(values)
+      })
+      .catch((err) => {
+        console.log('error', err)
+      })
+
     console.log({
       result,
       removeResult,
       updatedResult,
+      updatedMenuList,
     })
     return updatedResult
   }

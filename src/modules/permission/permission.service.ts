@@ -28,12 +28,11 @@ export class PermissionService {
   ) {}
 
   findAll(): Promise<any[]> {
-    const SQL = `select * from admin_menu  order by id asc`
-    // return this.permissionRepository.findBy({ active: 1 })
+    const SQL = `select * from admin_permission  order by id asc`
     return this.permissionRepository.query(SQL)
   }
   findActive(): Promise<any[]> {
-    const SQL = `select * from admin_menu where active = 1 order by id asc`
+    const SQL = `select * from admin_permission where active = 1 order by id asc`
     return this.permissionRepository.query(SQL)
   }
 

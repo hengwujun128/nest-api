@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { Permission } from './permission.entity'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Permission])],
+  imports: [TypeOrmModule.forFeature([Permission])], // only import Permissions entities, can synchronized
 
   controllers: [PermissionController],
   providers: [

@@ -21,6 +21,11 @@ export class RoleController {
     return wrapperResponse(this.roleService.create(roleData), '创建角色成功')
   }
 
+  @Put()
+  update(@Body() userData: CreateRoleDto) {
+    return wrapperResponse(this.roleService.update(userData), '更新角色成功')
+  }
+
   @Get('role_menu')
   getRoleMenu(@Query('roleId', ParseIntPipe) roleId: number) {
     return wrapperResponse(this.roleService.getRoleMenu(roleId), '获取角色菜单成功')
@@ -31,15 +36,15 @@ export class RoleController {
     return wrapperResponse(this.roleService.createRoleMenu(body), '关联角色菜单成功')
   }
 
-  // NOTE: 删除角色菜单为啥要用 body 传送呢?
   @Delete('role_menu')
   deleteRoleMenu(@Query('roleId', ParseIntPipe) roleId: number) {
     return wrapperResponse(this.roleService.removeRoleMenu(roleId), '删除角色菜单成功')
   }
 
-  @Put()
-  update(@Body() userData: CreateRoleDto) {
-    return wrapperResponse(this.roleService.update(userData), '更新角色成功')
+  @Public()
+  @Get('role_permission')
+  getRoleAuth(@Query('roleId', ParseIntPipe) roleId: number) {
+    return wrapperResponse(this.roleService.getRolePermission(roleId), '获取角色权限成功')
   }
 
   /* -------------------------------------------------------------------------- */

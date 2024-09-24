@@ -13,6 +13,7 @@ import { getMySqlUserNameAndPassword } from './utils'
 import { MenuModule } from './modules/menu/menu.module'
 
 import { RoleModule } from './modules/role/role.module'
+import { PermissionModule } from './modules/permission/permission.module'
 
 const { userName, password } = getMySqlUserNameAndPassword()
 
@@ -36,7 +37,8 @@ const { userName, password } = getMySqlUserNameAndPassword()
       password: password,
       database: 'nest-book-dev',
       entities: [],
-      synchronize: true,
+      synchronize: true, //在开发环境中使用 synchronize: true 是非常方便的，因为它可以在你修改实体类后立即看到数据库模式的改变，无需手动运行迁移（migrations）。
+      // 在生产环境中，更安全的做法是使用 TypeORM 的迁移系统。通过编写迁移脚本，你可以控制数据库模式的每一个更改，并确保这些更改是可追踪和可逆的
       autoLoadEntities: true, //自动加载 entity
       logging: true, // print sql logs
     }),
@@ -45,6 +47,7 @@ const { userName, password } = getMySqlUserNameAndPassword()
     BookModule,
     MenuModule,
     RoleModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService, TestService], // all services

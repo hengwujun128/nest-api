@@ -157,6 +157,14 @@ export class RoleService {
     return insertRes
   }
 
+  /**
+   * @desccription 获取角色权限
+   */
+  async getRolePermission(roleId: number): Promise<QueryResult> {
+    const sql = `SELECT roleId,menuId from role_permission WHERE roleId = ${roleId}`
+    return this.roleRepository.query(sql)
+  }
+
   /*
    * 更新角色
    * - 更新角色

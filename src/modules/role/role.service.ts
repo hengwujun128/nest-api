@@ -92,11 +92,11 @@ export class RoleService {
   }
 
   // 更新角色
-  async updateRole(body: CreateRoleDto) {
+  async updateRole(role: CreateRoleDto) {
     const roleData = new Role()
-    roleData.name = body.name
-    roleData.remark = body.remark
-    const id = body.id
+    roleData.name = role.name
+    roleData.remark = role.remark
+    const id = role.id
     return await this.roleRepository.update(id, roleData)
   }
 
@@ -143,8 +143,8 @@ export class RoleService {
     return this.roleRepository.query(sql)
   }
 
-  async updateRoleMenu(body) {
-    const { roleId, menus } = body
+  async updateRoleMenu(role) {
+    const { roleId, menus } = role
     const roleMenuData = menus.map((item) => {
       return { roleId, menuId: item }
     })
@@ -163,29 +163,36 @@ export class RoleService {
    * - 更新角色菜单绑定关系(先批量删除再批量插入)
    * - 更新 menu 表中的 meta 字段
    * */
-  async update(body: CreateRoleDto) {
-    console.log('编辑角色', body)
+  async update(role: CreateRoleDto) {
+    console.log('编辑角色', role)
 
-    const result = await this.updateRole(body)
-    const removeResult = await this.removeRoleMenu(body.id)
-    const updatedResult = await this.updateRoleMenu({ roleId: body.id, menus: body.menu })
+    const result = await this.updateRole(role)
+    const removeResult = await this.removeRoleMenu(role.id)
+    const updatedResult = await this.updateRoleMenu({ roleId: role.id, menus: role.menu })
     // 菜单表中的 每条菜单的 meta 字段都要更新, 也是批量更新
     // 查询 被当前角色的所关联的所有菜单,取出 meta,role 添加当前角色, 然后批量更新 meta 字段
-
-    const menuList = await this.roleRepository.query(`SELECT * FROM admin_menu WHERE id IN (${body.menu}) `)
-    // const currentRole = await this.roleRepository.query(`SELECT * FROM admin_role WHERE id=${body.id}`)
+    //TIPS: Fixedbug, 对当前角色关联的菜单的 meta 中的 roles 进行处理, 但是以前关联了,当前取消了关联,要删除
+    // const menuList = await this.roleRepository.query(`SELECT * FROM admin_menu WHERE id IN (${role.menu}) `)
+    const menuList = await this.roleRepository.query(`SELECT * FROM admin_menu`)
     const updatedMenuList = menuList.map((menu) => {
       const { meta } = menu
       if (meta) {
         const metaData = JSON.parse(meta)
         if (metaData.roles && metaData.roles.length) {
           const roles = JSON.parse(metaData.roles)
-          if (!roles.includes(body.name)) {
-            roles.push(body.name)
-            metaData.roles = JSON.stringify(roles)
+          if (role.menu.includes(menu.id)) {
+            if (!roles.includes(role.name)) {
+              roles.push(role.name)
+            }
+          } else {
+            // 不属于当前角色的菜单,且曾经已经关联了当前角色
+            if (roles.includes(role.name)) {
+              roles.splice(roles.indexOf(role.name), 1)
+            }
           }
+          metaData.roles = JSON.stringify(roles)
         } else {
-          metaData.roles = JSON.stringify([body.name])
+          metaData.roles = JSON.stringify([role.name])
         }
         metaData.roles = metaData.roles.replaceAll('"', '\\"') // 将双引号, 替换成 \"
         // console.log(metaData)
@@ -193,7 +200,7 @@ export class RoleService {
       }
       return menu
     })
-    // 批量更新 mate 字段
+    // 批量更新 mate 字段(这里是做了全量更新 meta 字段了，不管是否关联了当前角色都要更新)
     const sqlArr = []
     updatedMenuList.forEach((menu) => {
       const sql = `UPDATE  admin_menu SET meta = '${menu.meta}' WHERE id = ${menu.id}`

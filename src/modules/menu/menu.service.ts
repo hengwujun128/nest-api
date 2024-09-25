@@ -47,4 +47,17 @@ export class MenuService {
     const id = body.id
     return this.menuRepository.update(id, body)
   }
+  async remove(id: number) {
+    // 1. 删除菜单本身;2. 删除角色菜单绑定关系 |亦或 查看是否有绑定关系,如果有则不允许删除
+    const deleteMenuSql = `DELETE FROM admin_menu WHERE id = ${id}`
+
+    const querySql = `SELECT * FROM role_menu WHERE menuId = ${id}`
+
+    const res = await this.menuRepository.query(querySql)
+    if (res.length > 0) {
+      throw new Error('该菜单已被角色绑定，不允许删除,请先解除角色权限绑定关系')
+    } else {
+      return this.menuRepository.query(deleteMenuSql)
+    }
+  }
 }

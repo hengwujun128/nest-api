@@ -38,5 +38,6 @@ export class MenuController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     console.log(typeof id)
+    return wrapperResponse(this.menuService.remove(id), '删除菜单成功')
   }
 }

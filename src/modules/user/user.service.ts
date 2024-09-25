@@ -81,7 +81,25 @@ export class UserService {
   remove(id: number): Promise<DeleteResult> {
     return this.userRepository.delete(id)
   }
-  findByUserName(username: string): Promise<User> {
-    return this.userRepository.findOneBy({ username })
+  async findByUserName(username: string): Promise<CreateUserDto> {
+    // 获取用户信息后,还要获取用户权限(根据角色或者权限)
+    const userInfo = await this.userRepository.findOneBy({ username })
+    console.log('---userInfo---', userInfo)
+    const userRoles = JSON.parse(userInfo.roles)
+    const userRolesStr = userRoles.map((item) => {
+      return `'${item}'`
+    })
+
+    const ROLE_SQL = `SELECT id FROM admin_role WHERE name IN (${userRolesStr})`
+    const ROLE_PERMISSION_SQL = `SELECT permissionId FROM role_permission WHERE roleId IN (${ROLE_SQL})`
+    const PERMISSION_SQL = `SELECT * FROM admin_permission WHERE id in (${ROLE_PERMISSION_SQL})`
+
+    const userPermissions = await this.userRepository.query(PERMISSION_SQL)
+    console.log({
+      ROLE_PERMISSION_SQL,
+      PERMISSION_SQL,
+      userPermissions,
+    })
+    return { ...userInfo, permissions: userPermissions }
   }
 }

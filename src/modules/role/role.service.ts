@@ -67,19 +67,27 @@ export class RoleService {
    * @return {Promise<Role>} the newly created role
    */
   async create(createRoleDto: CreateRoleDto): Promise<any> {
-    // const role = new Role()
-    // role.name = createRoleDto.name
-    // role.remark = createRoleDto.remark
-    // return await this.roleRepository.save(role)
-    // 1. 先创建角色
-    const res = await this.createRole(createRoleDto)
-    console.log('res', res)
-    const { raw } = res
-    const roleMenuRes = await this.createRoleMenu({ roleId: raw.insertId, menus: createRoleDto.menu })
-    return roleMenuRes
-    // 2. 创建角色菜单绑定关系(一个角色,多个菜单)- 批量插入(注意:这里和编辑有区别,现在批量删除在新增)
-
-    // 3. 更新菜单中 meta 字段角色
+    try {
+      // 1. 先创建角色
+      const res = await this.createRole(createRoleDto)
+      console.log('res', res)
+      const { raw } = res
+      // const rolePermissionRes = await this.createRolePermission({
+      //   roleId: raw.insertId,
+      //   permissions: createRoleDto.permission,
+      // })
+      // const roleMenuRes = await this.createRoleMenu({ roleId: raw.insertId, menus: createRoleDto.menu })
+      // return roleMenuRes
+      return Promise.all([
+        this.createRolePermission({
+          roleId: raw.insertId,
+          permissions: createRoleDto.permission,
+        }),
+        this.createRoleMenu({ roleId: raw.insertId, menus: createRoleDto.menu }),
+      ])
+    } catch (error) {
+      throw error
+    }
   }
 
   // 创建角色
@@ -100,6 +108,41 @@ export class RoleService {
     return await this.roleRepository.update(id, roleData)
   }
 
+  // 创建角色权限
+  async createRolePermission(params): Promise<InsertResult> {
+    const { roleId, permissions } = params
+
+    const roleMenuData = permissions.map((item) => {
+      return { roleId, permissionId: item }
+    })
+    const insertRes = await this.roleRepository
+      .createQueryBuilder()
+      .insert()
+      .into('role_permission')
+      .values(roleMenuData)
+      .execute()
+    return insertRes
+  }
+
+  /**
+   * 获取角色权限
+   */
+  async getRolePermission(roleId: number): Promise<QueryResult> {
+    const sql = `SELECT roleId,permissionId from role_permission WHERE roleId = ${roleId}`
+    return this.roleRepository.query(sql)
+  }
+
+  /**
+   * 删除角色权限
+   */
+  removeRolePermission(roleId: number): Promise<DeleteResult> {
+    if (!roleId) {
+      return
+    }
+    const sql = `DELETE FROM role_permission WHERE roleId = ${roleId}`
+    return this.roleRepository.query(sql)
+  }
+
   /**
    * 创建角色菜单
    * - 创建 roleId 和 menuId 的绑定关系(批量插入)
@@ -108,9 +151,6 @@ export class RoleService {
   async createRoleMenu(params): Promise<InsertResult> {
     const { roleId, menus } = params
     console.log('createRoleMenu', params)
-    // const insertSql = `INSERT INTO role_menu (role_id, menu_id) VALUES (${roleId}, ${menuId})`
-    // const result = await this.roleRepository.query(insertSql)
-    // return result
 
     const roleMenuData = menus.map((item) => {
       return { roleId, menuId: item }
@@ -124,8 +164,8 @@ export class RoleService {
     return insertRes
   }
 
-  /*
-   * 获取角色菜单-根据 roleId获取角色的菜单
+  /**
+   * 获取角色菜单
    */
   getRoleMenu(roleId: number): Promise<QueryResult> {
     const sql = `SELECT roleId,menuId from role_menu WHERE roleId = ${roleId}`
@@ -143,44 +183,30 @@ export class RoleService {
     return this.roleRepository.query(sql)
   }
 
-  async updateRoleMenu(role) {
-    const { roleId, menus } = role
-    const roleMenuData = menus.map((item) => {
-      return { roleId, menuId: item }
-    })
-    const insertRes = await this.roleRepository
-      .createQueryBuilder()
-      .insert()
-      .into('role_menu')
-      .values(roleMenuData)
-      .execute()
-    return insertRes
-  }
-
-  /**
-   * @desccription 获取角色权限
-   */
-  async getRolePermission(roleId: number): Promise<QueryResult> {
-    const sql = `SELECT roleId,menuId from role_permission WHERE roleId = ${roleId}`
-    return this.roleRepository.query(sql)
-  }
-
   /*
    * 更新角色
    * - 更新角色
    * - 更新角色菜单绑定关系(先批量删除再批量插入)
    * - 更新 menu 表中的 meta 字段
    * */
-  async update(role: CreateRoleDto) {
-    console.log('编辑角色', role)
+  async update(currentRole: CreateRoleDto) {
+    console.log('编辑角色', currentRole)
 
-    const result = await this.updateRole(role)
-    const removeResult = await this.removeRoleMenu(role.id)
-    const updatedResult = await this.updateRoleMenu({ roleId: role.id, menus: role.menu })
+    const result = await this.updateRole(currentRole)
+    // 更新角色权限-先删除在新增
+    await this.removeRolePermission(currentRole.id)
+    await this.createRolePermission({
+      roleId: currentRole.id,
+      permissions: currentRole.permission,
+    })
+    // 更新角色菜单-先删除在新增
+    const removeResult = await this.removeRoleMenu(currentRole.id)
+    const updatedResult = await this.createRoleMenu({ roleId: currentRole.id, menus: currentRole.menu })
+
     // 菜单表中的 每条菜单的 meta 字段都要更新, 也是批量更新
-    // 查询 被当前角色的所关联的所有菜单,取出 meta,role 添加当前角色, 然后批量更新 meta 字段
+    // 查询 被当前角色的所关联的所有菜单,取出 meta,currentRole 添加当前角色, 然后批量更新 meta 字段
     //TIPS: Fixedbug, 对当前角色关联的菜单的 meta 中的 roles 进行处理, 但是以前关联了,当前取消了关联,要删除
-    // const menuList = await this.roleRepository.query(`SELECT * FROM admin_menu WHERE id IN (${role.menu}) `)
+    // const menuList = await this.roleRepository.query(`SELECT * FROM admin_menu WHERE id IN (${currentRole.menu}) `)
     const menuList = await this.roleRepository.query(`SELECT * FROM admin_menu`)
     const updatedMenuList = menuList.map((menu) => {
       const { meta } = menu
@@ -188,19 +214,20 @@ export class RoleService {
         const metaData = JSON.parse(meta)
         if (metaData.roles && metaData.roles.length) {
           const roles = JSON.parse(metaData.roles)
-          if (role.menu.includes(menu.id)) {
-            if (!roles.includes(role.name)) {
-              roles.push(role.name)
+          // 当前角色的菜单 包含了此菜单, 就要到此菜单 roles 中进行处理,
+          if (currentRole.menu.includes(menu.id)) {
+            if (!roles.includes(currentRole.name)) {
+              roles.push(currentRole.name)
             }
           } else {
             // 不属于当前角色的菜单,且曾经已经关联了当前角色
-            if (roles.includes(role.name)) {
-              roles.splice(roles.indexOf(role.name), 1)
+            if (roles.includes(currentRole.name)) {
+              roles.splice(roles.indexOf(currentRole.name), 1)
             }
           }
           metaData.roles = JSON.stringify(roles)
         } else {
-          metaData.roles = JSON.stringify([role.name])
+          metaData.roles = JSON.stringify([currentRole.name])
         }
         metaData.roles = metaData.roles.replaceAll('"', '\\"') // 将双引号, 替换成 \"
         // console.log(metaData)
@@ -214,7 +241,7 @@ export class RoleService {
       const sql = `UPDATE  admin_menu SET meta = '${menu.meta}' WHERE id = ${menu.id}`
       sqlArr.push(this.roleRepository.query(sql))
     })
-    Promise.all(sqlArr)
+    await Promise.all(sqlArr)
       .then((values) => {
         console.log(values)
       })

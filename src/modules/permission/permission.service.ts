@@ -27,8 +27,25 @@ export class PermissionService {
     readonly permissionRepository: Repository<Permission>,
   ) {}
 
-  findAll(): Promise<any[]> {
-    const SQL = `select * from admin_permission  order by id asc`
+  findAll(query): Promise<Permission[]> {
+    const { key } = query
+    let page = +query.page || 1
+    let pageSize = +query.pageSize || 10
+    let where = `where 1=1`
+
+    if (key) {
+      where += ` AND \`key\` LIKE '%${key}%'`
+    }
+    if (page <= 0) {
+      page = 1
+    }
+    if (pageSize <= 0) {
+      pageSize = 10
+    }
+
+    const SQL = `select * from admin_permission ${where} 
+     order by id desc  limit ${pageSize} offset ${(page - 1) * pageSize}`
+
     return this.permissionRepository.query(SQL)
   }
   findActive(): Promise<any[]> {
@@ -42,5 +59,23 @@ export class PermissionService {
   update(body) {
     const id = body.id
     return this.permissionRepository.update(id, body)
+  }
+
+  async remove(id: number) {
+    // 1. 删除权限本身;2. 删除角色权限绑定关系 | 查看是否有绑定关系,如果有则不允许删除
+    const deleteRolePermissionSql = `DELETE FROM role_permission WHERE permissionId = ${id}`
+    const deletePermissionSql = `DELETE FROM admin_permission WHERE id = ${id}`
+
+    const querySql = `SELECT * FROM role_permission WHERE permissionId = ${id}`
+
+    const res = await this.permissionRepository.query(querySql)
+    if (res.length > 0) {
+      throw new Error('该权限已被角色绑定，不允许删除,请先解除角色权限绑定关系')
+    } else {
+      return this.permissionRepository.query(deletePermissionSql)
+    }
+
+    // const res = await this.permissionRepository.query(deletePermissionSql)
+    // return this.permissionRepository.query(deleteRolePermissionSql)
   }
 }

@@ -17,7 +17,7 @@ export class RoleController {
 
   @Post()
   async create(@Body() roleData: CreateRoleDto) {
-    // return await this.roleService.create(userData)
+    // TODO: 参数校验?在什么时候开始做?
     return wrapperResponse(this.roleService.create(roleData), '创建角色成功')
   }
 
@@ -41,9 +41,8 @@ export class RoleController {
     return wrapperResponse(this.roleService.removeRoleMenu(roleId), '删除角色菜单成功')
   }
 
-  @Public()
   @Get('role_permission')
-  getRoleAuth(@Query('roleId', ParseIntPipe) roleId: number) {
+  getRolePermission(@Query('roleId', ParseIntPipe) roleId: number) {
     return wrapperResponse(this.roleService.getRolePermission(roleId), '获取角色权限成功')
   }
 

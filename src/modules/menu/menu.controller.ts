@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common'
 
 import { MenuService } from './menu.service'
 import { wrapperResponse } from '../../utils'
@@ -7,20 +7,19 @@ import { wrapperResponse } from '../../utils'
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
-  @Get('') // 此处 '/' 和 '' 是一样的
-  getAllMenus() {
-    return wrapperResponse(this.menuService.findAll(), '获取菜单成功')
-    // return this.menuService.findAll()
+  @Get() // 此处 '/' 和 '' 是一样的
+  getAllMenus(@Query() query) {
+    // TODO: 如何使用pipeLine 进行请求参数校验? 如果 query 是可选参数,直接使用装饰器会报错
+    const queryData = {
+      active: query?.status,
+      name: query?.menuName,
+    }
+    return wrapperResponse(this.menuService.findAll(queryData), '获取菜单成功')
   }
 
   @Get('active')
   getActiveMenus() {
     return wrapperResponse(this.menuService.findActive(), '获取菜单成功')
-  }
-
-  @Get(':id') // 此处 /:id 和 :id 是一样的
-  getUserById(@Param('id', ParseIntPipe) id: number) {
-    console.log(typeof id)
   }
 
   // 如何对参数的类型进行转换? ParseIntPipe
@@ -33,6 +32,11 @@ export class MenuController {
   @Put()
   update(@Body() menu) {
     return wrapperResponse(this.menuService.update(menu), '更新菜单成功')
+  }
+
+  @Get(':id') // 此处 /:id 和 :id 是一样的
+  getUserById(@Param('id', ParseIntPipe) id: number) {
+    console.log(typeof id)
   }
 
   @Delete(':id')

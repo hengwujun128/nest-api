@@ -30,8 +30,16 @@ export class MenuService {
     readonly menuRepository: Repository<Menu>,
   ) {}
 
-  findAll(): Promise<Menu[]> {
-    const SQL = `select * from admin_menu  order by id asc`
+  findAll(data): Promise<Menu[]> {
+    let WHERE = `where 1=1`
+    if (data.active) {
+      WHERE += ` AND active = ${data.active}`
+    }
+    if (data.name) {
+      WHERE += ` AND name like '%${data.name}%' `
+    }
+
+    const SQL = `select * from admin_menu ${WHERE} order by id asc`
     // return this.menuRepository.findBy({ active: 1 })
     return this.menuRepository.query(SQL)
   }

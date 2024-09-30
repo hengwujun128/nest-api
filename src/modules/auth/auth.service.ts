@@ -31,7 +31,7 @@ export class AuthService {
       }
     } else {
       // nest 内置抛出异常
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('密码不正确')
       //  使用自定义 异常 捕捉
     }
   }

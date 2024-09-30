@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Repository, Brackets } from 'typeorm'
 
 // import { MENU_LIST } from './menu.data'
 import * as MENUS from './menu.data.json'
@@ -30,21 +30,56 @@ export class MenuService {
     readonly menuRepository: Repository<Menu>,
   ) {}
 
-  findAll(data): Promise<Menu[]> {
-    let WHERE = `where 1=1`
-    if (data.active) {
-      WHERE += ` AND active = ${data.active}`
-    }
-    if (data.name) {
-      WHERE += ` AND name like '%${data.name}%' `
-    }
+  async find(data): Promise<any> {
+    // let WHERE = `where 1=1`
+    // if (data.active) {
+    //   WHERE += ` AND active = ${data.active}`
+    // }
+    // if (data.name) {
+    //   WHERE += ` AND name like '%${data.name}%' `
+    // }
+    // const SQL = `select * from admin_menu ${WHERE} order by id desc`
+    // return this.menuRepository.query(SQL)
 
-    const SQL = `select * from admin_menu ${WHERE} order by id asc`
-    // return this.menuRepository.findBy({ active: 1 })
-    return this.menuRepository.query(SQL)
+    const res = await this.menuRepository
+      .createQueryBuilder('admin_menu')
+      .where(
+        new Brackets((qb) => {
+          if (data.active) {
+            return qb.andWhere('active = :active', { active: data.active })
+          } else {
+            return qb
+          }
+        }),
+      )
+      .andWhere(
+        new Brackets((qb) => {
+          if (data.name) {
+            return qb.andWhere('name like :name', { name: `%${data.name}%` })
+          } else {
+            return qb
+          }
+        }),
+      )
+      .skip((data.page - 1) * data.pageSize)
+      .take(data.pageSize)
+      .getManyAndCount()
+
+    return {
+      list: res[0],
+      total: res[1],
+      pageSize: data.pageSize,
+      page: data.page,
+      pages: Math.ceil(res[1] / data.pageSize),
+    }
   }
   findActive(): Promise<Menu[]> {
     const SQL = `select * from admin_menu where active = 1 order by id asc`
+    return this.menuRepository.query(SQL)
+  }
+
+  findAll(): Promise<Menu[]> {
+    const SQL = `select * from admin_menu order by id asc`
     return this.menuRepository.query(SQL)
   }
 

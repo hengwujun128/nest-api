@@ -8,13 +8,28 @@ export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
   @Get() // 此处 '/' 和 '' 是一样的
-  getAllMenus(@Query() query) {
+  getMenus(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('pageSize', ParseIntPipe) pageSize: number,
+    // @Query('status', ParseIntPipe) status: number,
+    // @Query('menuName') menuName,
+    @Query() query,
+  ) {
+    console.log('----------')
+
     // TODO: 如何使用pipeLine 进行请求参数校验? 如果 query 是可选参数,直接使用装饰器会报错
     const queryData = {
       active: query?.status,
       name: query?.menuName,
+      page,
+      pageSize,
     }
-    return wrapperResponse(this.menuService.findAll(queryData), '获取菜单成功')
+    return wrapperResponse(this.menuService.find(queryData), '获取菜单成功')
+  }
+
+  @Get('all')
+  getAllMenus() {
+    return wrapperResponse(this.menuService.findAll(), '获取菜单成功')
   }
 
   @Get('active')

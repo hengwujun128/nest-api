@@ -1,3 +1,11 @@
+/*
+ * @Author: 张泽全 hengwujun128@gmail.com
+ * @Date: 2024-10-08 16:58:01
+ * @LastEditors: 张泽全 hengwujun128@gmail.com
+ * @LastEditTime: 2024-10-08 17:01:13
+ * @FilePath: /nest-vben-admin/src/app.module.ts
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
@@ -14,6 +22,10 @@ import { MenuModule } from './modules/menu/menu.module'
 
 import { RoleModule } from './modules/role/role.module'
 import { PermissionModule } from './modules/permission/permission.module'
+
+import { RolesModule } from './system/roles/roles.module'
+import { MenusModule } from './system/menus/menus.module'
+import { UsersModule } from './system/users/users.module'
 
 const { userName, password } = getMySqlUserNameAndPassword()
 
@@ -48,6 +60,9 @@ const { userName, password } = getMySqlUserNameAndPassword()
     MenuModule,
     RoleModule,
     PermissionModule,
+    RolesModule,
+    MenusModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, TestService], // all services

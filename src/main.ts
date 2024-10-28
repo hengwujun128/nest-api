@@ -2,12 +2,13 @@
  * @Author: 张泽全 hengwujun128@gmail.com
  * @Date: 2024-03-30 16:14:58
  * @LastEditors: 张泽全 hengwujun128@gmail.com
- * @LastEditTime: 2024-10-09 09:18:49
+ * @LastEditTime: 2024-10-28 19:19:54
  * @FilePath: /nest-vben-admin/src/main.ts
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import { NestFactory } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import { ValidationPipe } from '@nestjs/common'
 
 import { AppModule } from './app.module'
 
@@ -16,6 +17,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: true,
   })
+
+  // global pipes
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
+
+  // global interceptors
+
+  // global filters
 
   // app.setGlobalPrefix('api/v1/')
 
